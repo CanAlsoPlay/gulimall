@@ -1,15 +1,13 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <div>Profile</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'Profile'
 }
 </script>
 
-<style>
+<style scoped lang="stylus">
 
 </style>

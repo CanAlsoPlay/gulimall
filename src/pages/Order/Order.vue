@@ -1,15 +1,13 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <div>Order</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'Order'
 }
 </script>
 
-<style>
+<style scoped lang="stylus">
 
 </style>
