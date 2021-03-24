@@ -17,9 +17,10 @@ export default {
   mounted () {
     this.getAddress()
     this.getCategorys()
+    this.getShops()
   },
   methods: {
-    ...mapActions(['getAddress', 'getCategorys'])
+    ...mapActions(['getAddress', 'getCategorys', 'getShops'])
   }
 }
 </script>

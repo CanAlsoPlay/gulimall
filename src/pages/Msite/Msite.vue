@@ -29,6 +29,14 @@
       <!-- svg显示加载中提示界面 -->
       <img src="./images/msite_back.svg" alt="back" v-else>
     </nav>
+    <!--首页附近商家列表-->
+    <div class="msite_shop_list">
+      <div class="shop_header">
+        <i class="iconfont icon-xuanxiang"></i>
+        <span class="shop_header_title">附近商家</span>
+      </div>
+      <shop-list/>
+    </div>
   </section>
 </template>
 
@@ -37,6 +45,7 @@ import HeaderTop from '@/components/HeaderTop/HeaderTop.vue'
 import { mapState } from 'vuex'
 import Swiper from 'swiper'
 import 'swiper/dist/css/swiper.min.css'
+import ShopList from '@/components/ShopList/ShopList.vue'
 export default {
   name: 'Msite',
   data () {
@@ -46,10 +55,11 @@ export default {
     }
   },
   components: {
-    HeaderTop
+    HeaderTop,
+    ShopList
   },
   computed: {
-    ...mapState(['address', 'categorys']),
+    ...mapState(['address', 'categorys', 'shops']),
     categorysArr () {
       const { categorys } = this
       // 准备空的二维数组
@@ -146,4 +156,17 @@ export default {
         .swiper-pagination
           >span.swiper-pagination-bullet-active
             background #02a774
+    .msite_shop_list
+      top-border-1px(#e4e4e4)
+      margin-top 10px
+      background #fff
+      .shop_header
+        padding 10px 10px 0
+        .shop_icon
+          margin-left 5px
+          color #999
+        .shop_header_title
+          color #999
+          font-size 14px
+          line-height 20px
 </style>
