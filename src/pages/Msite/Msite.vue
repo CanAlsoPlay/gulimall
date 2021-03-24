@@ -15,7 +15,6 @@
 
 <script>
 import HeaderTop from '@/components/HeaderTop/HeaderTop.vue'
-
 export default {
   name: 'Msite',
   components: {
