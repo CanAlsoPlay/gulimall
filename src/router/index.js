@@ -4,6 +4,7 @@ import Msite from '@/pages/Msite/Msite'
 const Order = () => import('@/pages/Order/Order')
 const Profile = () => import('@/pages/Profile/Profile')
 const Search = () => import('@/pages/Search/Search')
+const Login = () => import('@/pages/Login/Login')
 Vue.use(Router)
 
 export default new Router({
@@ -28,6 +29,10 @@ export default new Router({
     {
       path: '/search',
       component: Search
+    },
+    {
+      path: '/login',
+      component: Login
     }
   ]
 })
