@@ -12,15 +12,15 @@
         <form>
           <div :class="{on: loginWay}"> <!-- 短信登陆 -->
             <section class="login_message">
-              <input type="tel" maxlength="11" v-model="phone" placeholder="手机号">
+              <input type="tel" required maxlength="11" v-model="phone" placeholder="手机号">
               <button class="get_verification" :disabled="!rightPhone" @click.prevent="getCode" :class="{right_phone: rightPhone}">
                       {{codeTime ? `已发送(${codeTime}s)` : '获取验证码'}}</button>
             </section>
             <section class="login_verification">
-              <input type="text" placeholder="验证码">
+              <input type="text" placeholder="验证码" v-model="code">
             </section>
             <section class="login_hint">
-              温馨提示：未注册Canye外卖帐号的手机号，登录时将自动注册，且代表已同意
+              温馨提示：未注册谷粒外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
@@ -37,7 +37,7 @@
               </div>
             </section>
             <section class="login_message">
-              <input type="text" maxlength="11" placeholder="验证码">
+              <input type="text" maxlength="8" v-model="captcha" placeholder="验证码">
               <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha" ref="captcha">
             </section>
           </div>
@@ -46,10 +46,13 @@
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
     </div>
+     <!-- 提示组件,closeTip事件在其中被分发出来 -->
+    <alert-tip :alertText="alertText" v-show="alertShow" @closeTip="closeTip"/>
   </section>
 </template>
 
 <script>
+import AlertTip from '@/components/AlertTip/AlertTip'
 export default {
   name: 'Login',
   data () {
@@ -60,8 +63,14 @@ export default {
       phone: '', // 手机号
       code: '', // 短信验证码
       account: '', // 用户名
-      pwd: '' // 密码
+      pwd: '', // 密码
+      captcha: '', // 图形验证码
+      alertText: '', // 提示文本
+      alertShow: false // 是否显示提示框
     }
+  },
+  components: {
+    AlertTip
   },
   computed: {
     rightPhone () {
@@ -69,10 +78,10 @@ export default {
     }
   },
   methods: {
+    // 异步获取短信验证码
     getCode () {
       if (this.codeTime === 0) {
-        console.log('getCode')
-        this.codeTime = 5
+        this.codeTime = 30
         const intervalId = setInterval(() => {
           this.codeTime--
           if (this.codeTime <= 0) {
@@ -80,6 +89,35 @@ export default {
           }
         }, 1000)
       }
+    },
+    // 登录
+    login () {
+      if (this.loginWay) { // 短信登录
+        const { rightPhone } = this
+        if (!rightPhone) {
+          this.showAlert('手机号不正确')
+        } else if (!/^\d{6}$/.test(this.code)) {
+          this.showAlert('验证码不正确')
+        }
+      } else { // 账号密码登录
+        if (!this.account) {
+          this.showAlert('账号不正确')
+        } else if (!this.pwd) {
+          this.showAlert('密码必须指定')
+        } else if (!this.captcha) {
+          this.showAlert('验证码必须指定')
+        }
+      }
+    },
+    // 显示提示框
+    showAlert (alertText) {
+      this.alertShow = true
+      this.alertText = alertText
+    },
+    // 关闭提示框
+    closeTip () {
+      this.alertShow = false
+      this.alertText = ''
     }
   }
 }
