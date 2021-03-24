@@ -4,16 +4,17 @@
       <div class="login_header">
         <h2 class="login_logo">谷粒外卖</h2>
         <div class="login_header_title">
-          <a href="javascript;" class="on">短信登录</a>
-          <a href="javascript;">密码登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay = true">短信登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay = false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class=""> <!-- 短信登陆 -->
+          <div :class="{on: loginWay}"> <!-- 短信登陆 -->
             <section class="login_message">
-              <input type="tel" placeholder="手机号">
-              <button class="get_verification right_phone">获取验证码</button>
+              <input type="tel" maxlength="11" v-model="phone" placeholder="手机号">
+              <button class="get_verification" :disabled="!rightPhone" @click.prevent="getCode" :class="{right_phone: rightPhone}">
+                      {{codeTime ? `已发送(${codeTime}s)` : '获取验证码'}}</button>
             </section>
             <section class="login_verification">
               <input type="text" placeholder="验证码">
@@ -23,12 +24,17 @@
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div class="on"> <!-- 密码登陆 -->
+          <div :class="{on: !loginWay}"> <!-- 密码登陆 -->
             <section class="login_message">
-              <input type="text" maxlength="11" placeholder="手机/邮箱/用户名">
+              <input type="text" maxlength="11" v-model="account" placeholder="手机/邮箱/用户名">
             </section>
             <section class="login_verification">
-              <input type="text" maxlength="8" placeholder="密码">
+              <input type="text" maxlength="8" placeholder="密码" v-model="pwd" v-if="showPwd">
+              <input type="password" maxlength="8" placeholder="密码" v-model="pwd" v-else>
+              <div class="switch_button" :class="showPwd?'on':'off'" @click="showPwd = !showPwd">
+                <div class="switch_circle" :class="{right: showPwd}"></div>
+                <span class="switch_text">{{showPwd ? 'abc' : ''}}</span>
+              </div>
             </section>
             <section class="login_message">
               <input type="text" maxlength="11" placeholder="验证码">
@@ -45,7 +51,37 @@
 
 <script>
 export default {
-  name: 'Login'
+  name: 'Login',
+  data () {
+    return {
+      loginWay: true, // true为短信登陆，false为密码登陆
+      codeTime: 0, // 验证码倒计时
+      showPwd: false, // 是否显示密码
+      phone: '', // 手机号
+      code: '', // 短信验证码
+      account: '', // 用户名
+      pwd: '' // 密码
+    }
+  },
+  computed: {
+    rightPhone () {
+      return /^1[3-9]\d{9}$/.test(this.phone)
+    }
+  },
+  methods: {
+    getCode () {
+      if (this.codeTime === 0) {
+        console.log('getCode')
+        this.codeTime = 5
+        const intervalId = setInterval(() => {
+          this.codeTime--
+          if (this.codeTime <= 0) {
+            clearInterval(intervalId)
+          }
+        }, 1000)
+      }
+    }
+  }
 }
 </script>
 
@@ -102,6 +138,42 @@ export default {
             background transparent
             &.right_phone
               color black
+        .login_verification
+          .switch_button
+            font-size 12px
+            border 1px solid #ddd
+            border-radius 8px
+            padding 0 6px
+            width 30px
+            height 16px
+            line-height 16px
+            color #fff
+            position absolute
+            top 50%
+            right 10px
+            transform translateY(-50%)
+            transition background-color .3s, border-color .3s
+            &.off
+              background-color #fff
+              .switch_text
+                float left
+                color #ddd
+            &.on
+              background-color #4cd96f
+            >.switch_circle
+              position absolute
+              top -1px
+              left -1px
+              width 16px
+              height 16px
+              border 1px solid #ddd
+              border-radius 50%
+              background #fff
+              box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
+              transition transform .3s
+              &.right
+                transform translateX(26px)
+                background-color #02a774
         input
           width 100%
           height 100%
