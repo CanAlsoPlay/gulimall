@@ -19,6 +19,8 @@ export default {
   name: 'Msite',
   components: {
     HeaderTop
+  },
+  mounted () {
   }
 }
 </script>
