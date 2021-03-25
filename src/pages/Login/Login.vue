@@ -54,6 +54,7 @@
 
 <script>
 import AlertTip from '@/components/AlertTip/AlertTip'
+import {reqPwdLogin, reqSendCode, reqSmsLogin} from '@/api'
 export default {
   name: 'Login',
   data () {
@@ -80,7 +81,7 @@ export default {
   },
   methods: {
     // 异步获取短信验证码
-    getCode () {
+    async getCode () {
       if (this.codeTime === 0) {
         this.codeTime = 30
         const intervalId = setInterval(() => {
@@ -89,25 +90,53 @@ export default {
             clearInterval(intervalId)
           }
         }, 1000)
+        // 发送ajax请求(向指定手机号发送验证码)
+        const result = await reqSendCode(this.phone)
+        if (result.code === 1) {
+          console.log(result)
+          this.showAlert(result.msg)
+        }
       }
     },
     // 登录
-    login () {
+    async login () {
+      let result
       if (this.loginWay) { // 短信登录
-        const { rightPhone } = this
+        const {phone, code, rightPhone} = this
         if (!rightPhone) {
           this.showAlert('手机号不正确')
-        } else if (!/^\d{6}$/.test(this.code)) {
+        } else if (!/^\d{6}$/.test(code)) {
           this.showAlert('验证码不正确')
         }
+        // 发送ajax请求短信登陆
+        result = await reqSmsLogin(phone, code)
       } else { // 账号密码登录
-        if (!this.name) {
+        const {name, pwd, captcha} = this
+        if (!name) {
           this.showAlert('账号不正确')
-        } else if (!this.pwd) {
+        } else if (!pwd) {
           this.showAlert('密码必须指定')
-        } else if (!this.captcha) {
+        } else if (!captcha) {
           this.showAlert('验证码必须指定')
         }
+        // 发送ajax请求密码登陆
+        result = await reqPwdLogin({name, pwd, captcha})
+      }
+      console.log(result)
+      // 根据返回结果处理
+      if (result.code === 0) {
+        const user = result.data
+        // 1.保存user到vuex中的state
+        // 2.跳转到个人中心
+        this.$store.dispatch('saveUser', user)
+        this.$router.replace('/profile')
+      } else {
+      // 显示提示
+        const msg = result.msg
+        this.showAlert(msg)
+        // 更换图形验证码
+        this.getCaptcha()
+        this.captcha = ''
       }
     },
     // 获取验证码
