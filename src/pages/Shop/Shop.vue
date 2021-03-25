@@ -1,5 +1,6 @@
 <template>
   <div>
+    <shop-header/>
     <div class="tab">
       <div class="tab-item">
         <!-- 使用replace的方式进行路由切换 （路由懒加载） -->
@@ -20,8 +21,14 @@
 </template>
 
 <script>
+import ShopHeader from '@/components/ShopHeader/ShopHeader.vue'
+
 export default {
-  name: 'Shop'
+  components: { ShopHeader },
+  name: 'Shop',
+  created () {
+    this.$store.dispatch('getShopInfo')
+  }
 }
 </script>
 
