@@ -26,7 +26,7 @@
           </div>
           <div :class="{on: !loginWay}"> <!-- 密码登陆 -->
             <section class="login_message">
-              <input type="text" maxlength="11" v-model="account" placeholder="手机/邮箱/用户名">
+              <input type="text" maxlength="11" v-model="name" placeholder="手机/邮箱/用户名">
             </section>
             <section class="login_verification">
               <input type="text" maxlength="8" placeholder="密码" v-model="pwd" v-if="showPwd">
@@ -38,7 +38,8 @@
             </section>
             <section class="login_message">
               <input type="text" maxlength="8" v-model="captcha" placeholder="验证码">
-              <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha" ref="captcha">
+              <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha"
+                 ref="captcha" @click="getCaptcha">
             </section>
           </div>
           <button class="login_submit" @click.prevent="login">登录</button>
@@ -62,7 +63,7 @@ export default {
       showPwd: false, // 是否显示密码
       phone: '', // 手机号
       code: '', // 短信验证码
-      account: '', // 用户名
+      name: '', // 用户名
       pwd: '', // 密码
       captcha: '', // 图形验证码
       alertText: '', // 提示文本
@@ -100,7 +101,7 @@ export default {
           this.showAlert('验证码不正确')
         }
       } else { // 账号密码登录
-        if (!this.account) {
+        if (!this.name) {
           this.showAlert('账号不正确')
         } else if (!this.pwd) {
           this.showAlert('密码必须指定')
@@ -108,6 +109,10 @@ export default {
           this.showAlert('验证码必须指定')
         }
       }
+    },
+    // 获取验证码
+    getCaptcha () {
+      this.$refs.captcha.src = 'http://localhost:4000/captcha?time=' + Date.now()
     },
     // 显示提示框
     showAlert (alertText) {
