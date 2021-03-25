@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Msite from '@/pages/Msite/Msite'
 const Order = () => import('@/pages/Order/Order')
 const Profile = () => import('@/pages/Profile/Profile')
+const UserInfo = () => import('@/pages/Profile/UserInfo')
 const Search = () => import('@/pages/Search/Search')
 const Login = () => import('@/pages/Login/Login')
 const Shop = () => import('@/pages/Shop/Shop')
@@ -20,19 +21,35 @@ export default new Router({
     {
       path: '/msite',
       name: 'Msite',
-      component: Msite
+      component: Msite,
+      meta: {
+        showFooter: true
+      }
     },
     {
       path: '/order',
-      component: Order
+      component: Order,
+      meta: {
+        showFooter: true
+      }
     },
     {
       path: '/profile',
-      component: Profile
+      component: Profile,
+      meta: {
+        showFooter: true
+      }
+    },
+    {
+      path: '/userInfo',
+      component: UserInfo
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      meta: {
+        showFooter: true
+      }
     },
     {
       path: '/login',

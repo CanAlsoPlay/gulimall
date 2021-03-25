@@ -4,9 +4,12 @@
       <router-link class="header_search" slot="left" to="/search">
         <i class="iconfont icon-sousuo"></i>
       </router-link>
-      <router-link class="header_login" slot="right" to="/login">
-        <span class="header_login_text">
+      <router-link class="header_login" slot="right" :to="userInfo._id? '/userinfo':'/login'">
+        <span class="header_login_text" v-if="!userInfo._id">
           登录|注册
+        </span>
+        <span class="header_login_text" v-else>
+          <i class="iconfont icon-yonghuming"></i>
         </span>
       </router-link>
     </header-top>
@@ -59,7 +62,7 @@ export default {
     ShopList
   },
   computed: {
-    ...mapState(['address', 'categorys', 'shops']),
+    ...mapState(['address', 'categorys', 'shops', 'userInfo']),
     categorysArr () {
       const { categorys } = this
       // 准备空的二维数组
