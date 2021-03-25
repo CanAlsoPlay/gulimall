@@ -18,9 +18,10 @@ export default {
     this.getAddress()
     this.getCategorys()
     this.getShops()
+    this.getUserInfo()
   },
   methods: {
-    ...mapActions(['getAddress', 'getCategorys', 'getShops'])
+    ...mapActions(['getAddress', 'getCategorys', 'getShops', 'getUserInfo'])
   }
 }
 </script>
