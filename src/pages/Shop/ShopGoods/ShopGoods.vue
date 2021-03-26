@@ -3,7 +3,8 @@
     <!-- 菜单对应的是食物分类列表-->
     <div class="menu-wrapper">
       <ul>
-        <li class="menu-item" v-for="(good, index) in goods" :key="index" :class="{current: index === currentIndex}">
+        <li class="menu-item" v-for="(good, index) in goods" :key="index" :class="{current: index === currentIndex}"
+          @click="clickMenuItem(index)">
           <span class="text bottom-border-1px">
             <img class="icon" :src="good.icon" v-if="good.icon">
             {{good.name}}
@@ -50,8 +51,7 @@ export default {
       menuScroll: null,
       foodScroll: null,
       scrollY: 0, // 右侧滑动的Y轴坐标(实时变化)
-      tops: [], // 所有右侧分类li的top组成的数组
-      currentIndex: 0
+      tops: [] // 所有右侧分类li的top组成的数组
     }
   },
   methods: {
@@ -84,10 +84,27 @@ export default {
         topYs.push(top)
       })
       this.tops = topYs
+    },
+    clickMenuItem (index) {
+      // 获取目标位置的Y坐标，并立即更新点击的分类
+      const topY = this.tops[index]
+      this.scrollY = topY
+      this.foodScroll.scrollTo(0, -topY, 300)
     }
   },
   computed: {
-    ...mapState(['goods'])
+    ...mapState(['goods']),
+    // 计算当前分类的index，在初始和数据发生变化时触发
+    currentIndex () {
+      const {scrollY, tops} = this
+      let index = 0
+      index = tops.findIndex((top, index) => {
+        // 当scrollY大于等于当前top并且小于下一项top
+        return scrollY >= top && scrollY < tops[index + 1]
+      })
+      console.log(index)
+      return index
+    }
   },
   mounted () {
     this.$store.dispatch('getShopGoods', () => { // 此回调函数在数据更新后执行
