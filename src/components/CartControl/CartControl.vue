@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     updateFoodCount (isAdd) {
-      this.$store.dispatch('updateFoodCount', {isAdd,food: this.food})
+      this.$store.dispatch('updateFoodCount', {isAdd, food: this.food})
     }
   }
 }

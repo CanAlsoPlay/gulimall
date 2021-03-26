@@ -33,6 +33,9 @@
                   <span class="now">￥{{food.price}}</span>
                   <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cart-control :food="food"/>
+                </div>
               </div>
             </li>
           </ul>
@@ -45,7 +48,12 @@
 <script>
 import {mapState} from 'vuex'
 import BScroll from 'better-scroll'
+import CartControl from '@/components/CartControl/CartControl.vue'
+
 export default {
+  components: {
+    CartControl
+  },
   data () {
     return {
       menuScroll: null,
@@ -69,7 +77,6 @@ export default {
       // 惯性滑动后也触发
       this.foodScroll.on('scrollEnd', (pos) => {
         this.scrollY = Math.abs(pos.y)
-        console.log(this.scrollY)
       })
     },
     // 初始化tops
@@ -102,7 +109,6 @@ export default {
         // 当scrollY大于等于当前top并且小于下一项top
         return scrollY >= top && scrollY < tops[index + 1]
       })
-      console.log(index)
       return index
     }
   },
@@ -210,4 +216,8 @@ export default {
             text-decoration: line-through
             font-size: 10px
             color: rgb(147, 153, 159)
+        .cartcontrol-wrapper
+          position: absolute
+          right: 0
+          bottom: 12px
 </style>
