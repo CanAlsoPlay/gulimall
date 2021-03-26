@@ -9,5 +9,9 @@ export default {
   totalPrice (state) {
     return state.cartFoods.reduce(
       (total, food) => total + food.count * food.price, 0)
+  },
+  positiveRatingCount (state) {
+    return state.ratings.reduce(
+      (pre, rating) => pre + (rating.rateType === 0 ? 1 : 0), 0)
   }
 }

@@ -28,17 +28,17 @@
 
       <div class="ratingselect">
         <div class="rating-type border-1px">
-          <span class="block positive" :class="{active: selectType === 2}">
+          <span class="block positive" :class="{active: selectType === 2}" @click="setSelectType(2)">
             全部<span class="count">{{ratings.length}}</span>
           </span>
-          <span class="block positive">
-            满意<span class="count"></span>
+          <span class="block positive" :class="{active: selectType === 0}" @click="setSelectType(0)">
+            满意<span class="count">{{positiveRatingCount}}</span>
           </span>
-          <span class="block negative">
-            不满意<span class="count"></span>
+          <span class="block negative" :class="{active: selectType === 1}" @click="setSelectType(1)">
+            不满意<span class="count">{{ratings.length - positiveRatingCount}}</span>
           </span>
         </div>
-        <div class="switch" :class="{on: onlyShowText}">
+        <div class="switch" :class="{on: onlyShowText}" @click="toggleOnlyShowText">
           <span class="iconfont icon-checkcircle"></span>
           <span class="text">只看有内容的评价</span>
         </div>
@@ -46,7 +46,7 @@
 
       <div class="rating-wrapper">
         <ul>
-          <li class="rating-item" v-for="(rating,index) in ratings" :key="index">
+          <li class="rating-item" v-for="(rating,index) in filterRatings" :key="index">
             <div class="avatar">
               <img width="28" height="28" :src="rating.avatar" />
             </div>
@@ -64,7 +64,7 @@
                   {{recommend}}
                 </span>
               </div>
-              <div class="time">{{rating.rateTime}}</div>
+              <div class="time">{{rating.rateTime | datefmt}}</div>
             </div>
           </li>
         </ul>
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import Star from '@/components/Star/Star.vue'
 import BScroll from 'better-scroll'
 export default {
@@ -94,11 +94,28 @@ export default {
       })
     })
   },
+  methods: {
+    setSelectType (currentType) {
+      this.selectType = currentType
+    },
+    toggleOnlyShowText () {
+      this.onlyShowText = !this.onlyShowText
+    }
+  },
   components: {
     Star
   },
   computed: {
-    ...mapState(['info', 'ratings'])
+    ...mapState(['info', 'ratings']),
+    ...mapGetters(['positiveRatingCount']),
+    filterRatings () {
+      const {ratings, onlyShowText, selectType} = this
+      return ratings.filter(rating => {
+        const {rateType, text} = rating
+        return (selectType === 2 || selectType === rateType) &&
+          (!onlyShowText || text.length > 0)
+      })
+    }
   }
 }
 </script>
@@ -208,7 +225,7 @@ export default {
       font-size: 0
       &.on
         .icon-checkcircle
-          color: $green
+          color: #00CD66
       .icon-checkcircle
         display: inline-block
         vertical-align: top
