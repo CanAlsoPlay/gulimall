@@ -43,10 +43,47 @@
 
 <script>
 import {mapState} from 'vuex'
+import BScroll from 'better-scroll'
 export default {
   data () {
     return {
+      menuScroll: null,
+      foodScroll: null,
+      scrollY: 0, // 右侧滑动的Y轴坐标(实时变化)
+      tops: [], // 所有右侧分类li的top组成的数组
       currentIndex: 0
+    }
+  },
+  methods: {
+    _initScroll () { // 初始化BScroll,列表显示后创建
+      this.menuScroll = new BScroll('.menu-wrapper', {
+        click: true
+      })
+      this.foodScroll = new BScroll('.foods-wrapper', {
+        probeType: 2, // 因为惯性滑动不会触发
+        click: true
+      })
+      this.foodScroll.on('scroll', (pos) => {
+        this.scrollY = Math.abs(pos.y)
+      })
+      // 惯性滑动后也触发
+      this.foodScroll.on('scrollEnd', (pos) => {
+        this.scrollY = Math.abs(pos.y)
+        console.log(this.scrollY)
+      })
+    },
+    // 初始化tops
+    _initTops () {
+      let topYs = []
+      let top = 0
+      topYs.push(top)
+      // 找到所有分类的li
+      const lis = this.$refs.foodsUl.children
+      Array.prototype.slice.call(lis).forEach(li => {
+        top += li.clientHeight
+        topYs.push(top)
+      })
+      this.tops = topYs
     }
   },
   computed: {
@@ -55,6 +92,8 @@ export default {
   mounted () {
     this.$store.dispatch('getShopGoods', () => { // 此回调函数在数据更新后执行
       this.$nextTick(() => { // 数据更新显示后
+        this._initScroll()
+        this._initTops()
       })
     })
   }
