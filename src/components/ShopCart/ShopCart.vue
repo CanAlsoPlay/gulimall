@@ -5,8 +5,8 @@
       <div class="content">
         <div class="content-left" @click="toggleShow">
           <div class="logo-wrapper">
-            <div class="logo">
-              <i class="iconfont icon-shopping"></i>
+            <div class="logo" :class="{highlight: totalCount}">
+              <i class="iconfont icon-shopping" :class="{highlight: totalCount}"></i>
             </div>
             <div class="num" v-if="totalCount">{{totalCount}}</div>
           </div>
@@ -22,7 +22,7 @@
         <div class="shopcart-list" v-show="listShow">
           <div class="list-header">
             <h1 class="title">购物车</h1>
-            <span class="empty">清空</span>
+            <span class="empty" @click="clearCart">清空</span>
           </div>
           <div class="list-content">
             <ul>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-// import { MessageBox } from 'mint-ui'
+import { MessageBox } from 'mint-ui'
 import BScroll from 'better-scroll'
 import {mapState, mapGetters} from 'vuex'
 import CartControl from '../CartControl/CartControl.vue'
@@ -76,7 +76,7 @@ export default {
     listShow () {
       // 如果总数量为0，直接不显示
       if (this.totalCount === 0) {
-        this.toggleShow()
+        this.showFalse()
         return false
       } else if (this.isShow) {
         this.$nextTick(() => {
@@ -93,6 +93,9 @@ export default {
         this.isShow = !this.isShow
       }
     },
+    showFalse () {
+      this.isShow = false
+    },
     _initScroll () {
       if (!this.bscroll) {
         this.bscroll = new BScroll('.list-content', {
@@ -101,6 +104,14 @@ export default {
       } else {
         this.bscroll.refresh()
       }
+    },
+    clearCart () {
+      MessageBox.confirm('确定清空购物车吗？').then(
+        action => {
+          this.$store.dispatch('clearCart')
+        },
+        action => {}
+      )
     }
   },
   components: {
