@@ -18,7 +18,8 @@
         <li class="food-list-hook" v-for="(good,index) in goods" :key="index">
           <h1 class="title">{{good.name}}</h1>
           <ul>
-            <li class="food-item bottom-border-1px" v-for="(food,index) in good.foods" :key="index">
+            <li class="food-item bottom-border-1px" v-for="(food,index) in good.foods" :key="index"
+              @click="showFood(food)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
               </div>
@@ -42,6 +43,7 @@
         </li>
       </ul>
     </div>
+    <food :food="currentFood" ref="food"/>
   </div>
 </template>
 
@@ -49,17 +51,20 @@
 import {mapState} from 'vuex'
 import BScroll from 'better-scroll'
 import CartControl from '@/components/CartControl/CartControl.vue'
+import Food from '@/components/Food/Food.vue'
 
 export default {
   components: {
-    CartControl
+    CartControl,
+    Food
   },
   data () {
     return {
       menuScroll: null,
       foodScroll: null,
       scrollY: 0, // 右侧滑动的Y轴坐标(实时变化)
-      tops: [] // 所有右侧分类li的top组成的数组
+      tops: [], // 所有右侧分类li的top组成的数组
+      currentFood: {} // 当前预览的food
     }
   },
   methods: {
@@ -97,6 +102,10 @@ export default {
       const topY = this.tops[index]
       this.scrollY = topY
       this.foodScroll.scrollTo(0, -topY, 300)
+    },
+    showFood (food) {
+      this.currentFood = food
+      this.$refs.food.toggleIsShow()
     }
   },
   computed: {
