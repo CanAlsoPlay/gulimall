@@ -99,7 +99,7 @@
             <span class="iconfont icon-close"></span>
           </div>
         </div>
-        <div class="activity-sheet-cover"></div>
+        <div class="activity-sheet-cover" @click="toggleSupportShow"></div>
       </div>
     </transition>
   </div>
