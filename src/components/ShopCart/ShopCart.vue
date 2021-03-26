@@ -3,7 +3,7 @@
     <div class="shopcart">
       <!-- 底部区域 -->
       <div class="content">
-        <div class="content-left">
+        <div class="content-left" @click="toggleShow">
           <div class="logo-wrapper">
             <div class="logo">
               <i class="iconfont icon-shopping"></i>
@@ -19,7 +19,7 @@
       </div>
       <!-- 购物车列表 -->
       <transition name="move">
-        <div class="shopcart-list">
+        <div class="shopcart-list" v-show="listShow">
           <div class="list-header">
             <h1 class="title">购物车</h1>
             <span class="empty">清空</span>
@@ -38,18 +38,20 @@
         </div>
       </transition>
     </div>
+    <div class="list-mask" v-show="listShow" @click="toggleShow"></div>
   </div>
 </template>
 
 <script>
 // import { MessageBox } from 'mint-ui'
-// import BScroll from 'better-scroll'
+import BScroll from 'better-scroll'
 import {mapState, mapGetters} from 'vuex'
 import CartControl from '../CartControl/CartControl.vue'
 export default {
   data () {
     return {
-      isShow: false
+      isShow: false,
+      bscroll: null
     }
   },
   computed: {
@@ -70,6 +72,18 @@ export default {
       } else {
         return '去结算'
       }
+    },
+    listShow () {
+      // 如果总数量为0，直接不显示
+      if (this.totalCount === 0) {
+        this.toggleShow()
+        return false
+      } else if (this.isShow) {
+        this.$nextTick(() => {
+          this._initScroll()
+        })
+      }
+      return this.isShow
     }
   },
   methods: {
@@ -77,6 +91,15 @@ export default {
       // 当总数量大于0时才切换
       if (this.totalCount > 0) {
         this.isShow = !this.isShow
+      }
+    },
+    _initScroll () {
+      if (!this.bscroll) {
+        this.bscroll = new BScroll('.list-content', {
+          click: true
+        })
+      } else {
+        this.bscroll.refresh()
       }
     }
   },
@@ -226,4 +249,19 @@ export default {
           position absolute
           right 0
           bottom 6px
+.list-mask
+  position fixed
+  top 0
+  left 0
+  width 100%
+  height 100%
+  z-index 40
+  backdrop-filter blur(10px)
+  opacity 1
+  background rgba(7, 17, 27, 0.6)
+  &.fade-enter-active, &.fade-leave-active
+    transition all 0.5s
+  &.fade-enter, &.fade-leave-to
+    opacity 0
+    background rgba(7, 17, 27, 0)
 </style>
