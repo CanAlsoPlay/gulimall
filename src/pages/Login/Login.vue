@@ -105,8 +105,10 @@ export default {
         const {phone, code, rightPhone} = this
         if (!rightPhone) {
           this.showAlert('手机号不正确')
+          return false
         } else if (!/^\d{6}$/.test(code)) {
           this.showAlert('验证码不正确')
+          return false
         }
         // 发送ajax请求短信登陆
         result = await reqSmsLogin(phone, code)
@@ -114,10 +116,13 @@ export default {
         const {name, pwd, captcha} = this
         if (!name) {
           this.showAlert('账号不正确')
+          return false
         } else if (!pwd) {
           this.showAlert('密码必须指定')
+          return false
         } else if (!captcha) {
           this.showAlert('验证码必须指定')
+          return false
         }
         // 发送ajax请求密码登陆
         result = await reqPwdLogin({name, pwd, captcha})
