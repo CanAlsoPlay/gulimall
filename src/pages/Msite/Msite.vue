@@ -82,10 +82,10 @@ export default {
     }
   },
   mounted () {
+    this._initScroll()
   },
-  watch: {
-    /* eslint-disable no-new */
-    categorys () { // categorys数组中有数据了，在异步更新界面之前执行
+  methods: {
+    _initScroll () {
       this.$nextTick(() => { // 一旦界面更新立即调用(要写在数据更新之后)
         this.swiper = new Swiper('.swiper-container', {
           loop: true, // 循环轮播
@@ -94,6 +94,12 @@ export default {
           }
         })
       })
+    }
+  },
+  watch: {
+    /* eslint-disable no-new */
+    categorys () { // categorys数组中有数据了，在异步更新界面之前执行
+      this._initScroll()
     }
   }
 }
